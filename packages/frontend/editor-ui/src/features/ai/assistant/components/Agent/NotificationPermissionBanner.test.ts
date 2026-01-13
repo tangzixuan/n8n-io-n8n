@@ -8,11 +8,13 @@ const mockRequestPermission = vi
 	.fn()
 	.mockResolvedValue({ permission: 'granted', wasRequested: true });
 const mockRecordDismissal = vi.fn();
+const mockResetMetadata = vi.fn();
 
 vi.mock('@/app/composables/useBrowserNotifications', () => ({
 	useBrowserNotifications: () => ({
 		requestPermission: mockRequestPermission,
 		recordDismissal: mockRecordDismissal,
+		resetMetadata: mockResetMetadata,
 	}),
 }));
 
@@ -27,6 +29,7 @@ describe('NotificationPermissionBanner', () => {
 	beforeEach(() => {
 		mockRequestPermission.mockClear();
 		mockRecordDismissal.mockClear();
+		mockResetMetadata.mockClear();
 	});
 
 	const mountComponent = () => {

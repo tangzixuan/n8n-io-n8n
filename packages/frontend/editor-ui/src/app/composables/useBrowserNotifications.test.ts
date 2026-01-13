@@ -413,4 +413,70 @@ describe('useBrowserNotifications', () => {
 			expect(canPrompt.value).toBe(false);
 		});
 	});
+
+	describe('refreshPermissionState', () => {
+		it('should update permission state from Notification API', () => {
+			const { refreshPermissionState, permissionState } = useBrowserNotifications();
+
+			expect(permissionState.value).toBe('default');
+
+			// Change the mock permission
+			Object.defineProperty(global.Notification, 'permission', {
+				value: 'granted',
+				writable: true,
+				configurable: true,
+			});
+
+			refreshPermissionState();
+
+			expect(permissionState.value).toBe('granted');
+		});
+
+		it('should not throw when Notification is undefined', () => {
+			const { refreshPermissionState, permissionState } = useBrowserNotifications();
+
+			// Remove Notification API
+			// @ts-expect-error - intentionally setting to undefined for test
+			delete global.Notification;
+
+			// Should not throw
+			expect(() => refreshPermissionState()).not.toThrow();
+
+			// Permission state should remain unchanged
+			expect(permissionState.value).toBe('default');
+		});
+	});
+
+	describe('requestPermission edge cases', () => {
+		it('should not request permission when max dismissals exceeded even without cooldown', async () => {
+			// Use cooldownMs: 0 to bypass cooldown
+			const { recordDismissal, requestPermission } = useBrowserNotifications({
+				cooldownMs: 0,
+				maxDismissals: 2,
+			});
+
+			// Record 2 dismissals to exceed max
+			recordDismissal();
+			recordDismissal();
+
+			const result = await requestPermission();
+
+			expect(mockRequestPermission).not.toHaveBeenCalled();
+			expect(result.wasRequested).toBe(false);
+			expect(result.permission).toBe('default');
+		});
+	});
+
+	describe('__resetpermissionState edge cases', () => {
+		it('should set permission to denied when Notification is undefined', () => {
+			// Remove Notification API before reset
+			// @ts-expect-error - intentionally setting to undefined for test
+			delete global.Notification;
+
+			__resetpermissionState();
+
+			const { permissionState } = useBrowserNotifications();
+			expect(permissionState.value).toBe('denied');
+		});
+	});
 });

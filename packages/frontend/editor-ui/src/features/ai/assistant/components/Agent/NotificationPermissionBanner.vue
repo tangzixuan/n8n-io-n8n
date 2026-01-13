@@ -3,11 +3,14 @@ import { useI18n } from '@n8n/i18n';
 import { N8nIcon, N8nButton } from '@n8n/design-system';
 import { useBrowserNotifications } from '@/app/composables/useBrowserNotifications';
 
-const { requestPermission, recordDismissal } = useBrowserNotifications();
+const { requestPermission, recordDismissal, resetMetadata } = useBrowserNotifications();
 const i18n = useI18n();
 
 async function onNotifyClick() {
-	await requestPermission();
+	const { permission } = await requestPermission();
+	if (permission === 'granted' || permission === 'denied') {
+		resetMetadata();
+	}
 }
 
 function onDismissClick() {
@@ -60,6 +63,7 @@ function onDismissClick() {
 .text {
 	color: var(--callout--color--text--info);
 	font-size: var(--font-size--2xs);
+	line-height: var(--line-height--xl);
 	flex: 1;
 }
 

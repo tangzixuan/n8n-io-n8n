@@ -2858,7 +2858,6 @@ describe('AI Builder store', () => {
 			capturedOnMessageCallback = null;
 			capturedDoneCallback = null;
 
-			// Mock chatWithBuilder to capture the onMessage and done callbacks
 			apiSpy.mockImplementation((_context, _options, onMessage, onDone) => {
 				capturedOnMessageCallback = onMessage;
 				capturedDoneCallback = onDone;
@@ -2872,10 +2871,8 @@ describe('AI Builder store', () => {
 			workflowsStore.isNewWorkflow = false;
 			workflowsStore.workflowVersionId = 'version-1';
 
-			// Trigger sendChatMessage to start streaming and capture callbacks
 			await builderStore.sendChatMessage({ text: 'test message' });
 
-			// Simulate a workflow-updated message to indicate successful build
 			if (capturedOnMessageCallback) {
 				capturedOnMessageCallback({
 					messages: [
@@ -2889,7 +2886,6 @@ describe('AI Builder store', () => {
 				});
 			}
 
-			// Simulate successful completion by calling the done callback
 			if (capturedDoneCallback) {
 				capturedDoneCallback();
 			}
@@ -2970,10 +2966,8 @@ describe('AI Builder store', () => {
 
 			await triggerSuccessfulStreamingComplete();
 
-			// Verify onclick handler was set
 			expect(mockNotification.onclick).not.toBeNull();
 
-			// Simulate clicking the notification
 			if (mockNotification.onclick) {
 				mockNotification.onclick(new Event('click'));
 			}

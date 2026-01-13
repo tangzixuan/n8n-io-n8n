@@ -64,6 +64,16 @@ watch(
 	},
 );
 
+watch(
+	() => builderStore.chatMessages.length,
+	(messageCount) => {
+		if (messageCount > 0 && canPrompt.value) {
+			notificationsPermissionsBannerTriggered.value = true;
+		}
+	},
+	{ immediate: true },
+);
+
 const shouldShowNotificationBanner = computed(() => {
 	return notificationsPermissionsBannerTriggered.value && canPrompt.value;
 });
@@ -384,14 +394,21 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
-.slide-enter-active,
-.slide-leave-active {
-	transition: transform var(--animation--duration) var(--animation--easing);
+:global(.slide-enter-active),
+:global(.slide-leave-active) {
+	transition:
+		transform 0.2s ease-out,
+		opacity 0.2s ease-out,
+		max-height 0.2s ease-out;
+	max-height: 100px;
+	overflow: hidden;
 }
 
-.slide-enter-from,
-.slide-leave-to {
+:global(.slide-enter-from),
+:global(.slide-leave-to) {
 	transform: translateY(8px);
+	opacity: 0;
+	max-height: 0;
 }
 </style>
 

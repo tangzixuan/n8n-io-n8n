@@ -137,6 +137,7 @@ export const useBuilderStore = defineStore(STORES.BUILDER, () => {
 	const uiStore = useUIStore();
 	const router = useRouter();
 	const workflowSaver = useWorkflowSaving({ router });
+	const browserNotifications = useBrowserNotifications();
 
 	// Composables
 	const {
@@ -280,7 +281,7 @@ export const useBuilderStore = defineStore(STORES.BUILDER, () => {
 	 * Clicking the notification focuses the window and closes it.
 	 */
 	function notifyOnCompletion(completionType: CompletionType) {
-		const { showNotification, isEnabled } = useBrowserNotifications();
+		const { showNotification, isEnabled } = browserNotifications;
 		if (!isEnabled.value) {
 			return;
 		}

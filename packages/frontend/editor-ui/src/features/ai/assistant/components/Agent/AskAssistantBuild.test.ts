@@ -99,9 +99,7 @@ vi.mock('@n8n/design-system/components/AskAssistantChat/AskAssistantChat.vue', (
 								}),
 							]
 						: null,
-					// Render inputHeader slot if it exists (for notification banner)
 					slots.inputHeader?.(),
-					// Render messagesFooter slot if it exists
 					slots.messagesFooter?.(),
 				]);
 			};
@@ -1302,7 +1300,6 @@ describe('AskAssistantBuild', () => {
 
 			const { queryByTestId } = renderComponent();
 
-			// Start streaming
 			builderStore.$patch({ streaming: true });
 			await flushPromises();
 
@@ -1314,7 +1311,6 @@ describe('AskAssistantBuild', () => {
 
 			const { queryByTestId } = renderComponent();
 
-			// Start streaming
 			builderStore.$patch({ streaming: true });
 			await flushPromises();
 
@@ -1326,21 +1322,18 @@ describe('AskAssistantBuild', () => {
 
 			const { queryByTestId } = renderComponent();
 
-			// Start streaming - banner should appear
 			builderStore.$patch({ streaming: true });
 			await flushPromises();
 
 			expect(queryByTestId('notification-permission-banner')).toBeInTheDocument();
 
-			// End streaming - banner should remain visible
 			builderStore.$patch({ streaming: false });
 			await flushPromises();
 
 			expect(queryByTestId('notification-permission-banner')).toBeInTheDocument();
 		});
 
-		it('should not show notification banner for existing chat sessions without streaming', async () => {
-			// Simulate returning to an existing chat session with messages but no streaming
+		it('should show notification banner for existing chat sessions without streaming', async () => {
 			builderStore.$patch({
 				streaming: false,
 				chatMessages: [
@@ -1360,8 +1353,7 @@ describe('AskAssistantBuild', () => {
 
 			await flushPromises();
 
-			// Banner should NOT be shown since streaming hasn't started in this session
-			expect(queryByTestId('notification-permission-banner')).not.toBeInTheDocument();
+			expect(queryByTestId('notification-permission-banner')).toBeInTheDocument();
 		});
 	});
 });
