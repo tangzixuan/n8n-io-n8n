@@ -158,12 +158,14 @@ function prepareRequestingNodeForResuming(
 
 		return undefined;
 	}
-	const metadata: Partial<ITaskMetadata> = executionData.metadata?.preservedSourceOverwrite
-		? {
-				preserveSourceOverwrite: true,
-				preservedSourceOverwrite: executionData.metadata.preservedSourceOverwrite,
-			}
-		: {};
+	const metadata: Partial<ITaskMetadata> =
+		executionData.metadata?.preservedSourceOverwrite &&
+		executionData.metadata?.preserveSourceOverwrite
+			? {
+					preserveSourceOverwrite: true,
+					preservedSourceOverwrite: executionData.metadata.preservedSourceOverwrite,
+				}
+			: {};
 	const connectionData: IConnection = {
 		// agents always have a main input
 		type: 'ai_tool',
