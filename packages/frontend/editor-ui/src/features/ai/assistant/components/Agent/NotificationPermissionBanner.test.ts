@@ -23,6 +23,18 @@ vi.mock('@n8n/i18n', () => ({
 	useI18n: () => ({
 		baseText: (key: string) => key,
 	}),
+	i18n: {
+		baseText: (key: string) => key,
+	},
+}));
+
+// Mock builder store
+const mockTrackWorkflowBuilderJourney = vi.fn();
+
+vi.mock('../../builder.store', () => ({
+	useBuilderStore: () => ({
+		trackWorkflowBuilderJourney: mockTrackWorkflowBuilderJourney,
+	}),
 }));
 
 describe('NotificationPermissionBanner', () => {
@@ -30,6 +42,7 @@ describe('NotificationPermissionBanner', () => {
 		mockRequestPermission.mockClear();
 		mockRecordDismissal.mockClear();
 		mockResetMetadata.mockClear();
+		mockTrackWorkflowBuilderJourney.mockClear();
 	});
 
 	const mountComponent = () => {
@@ -114,6 +127,24 @@ describe('NotificationPermissionBanner', () => {
 			await closeIcon.trigger('click');
 
 			expect(mockRequestPermission).not.toHaveBeenCalled();
+		});
+
+		it('tracks browser_notification_accept when notify button is clicked', async () => {
+			const wrapper = mountComponent();
+
+			const notifyButton = wrapper.find('[data-test-id="notification-banner-notify"]');
+			await notifyButton.trigger('click');
+
+			expect(mockTrackWorkflowBuilderJourney).toHaveBeenCalledWith('browser_notification_accept');
+		});
+
+		it('tracks browser_notification_dismiss when close icon is clicked', async () => {
+			const wrapper = mountComponent();
+
+			const closeIcon = wrapper.find('[data-test-id="notification-banner-dismiss"]');
+			await closeIcon.trigger('click');
+
+			expect(mockTrackWorkflowBuilderJourney).toHaveBeenCalledWith('browser_notification_dismiss');
 		});
 	});
 });
